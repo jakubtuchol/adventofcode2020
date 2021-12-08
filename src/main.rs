@@ -10,11 +10,13 @@ use std::process::exit;
 const APP_NAME: &str = "Advent of Code 2020";
 const VERSION: &str = "0.1";
 
+mod day_four;
 mod day_one;
+mod day_three;
 mod day_two;
 
 fn main() {
-    let available_days: Vec<fn()> = vec![run_day_one, run_day_two];
+    let available_days: Vec<fn()> = vec![run_day_one, run_day_two, run_day_three, run_day_four];
 
     let matches = App::new(APP_NAME)
         .version(VERSION)
@@ -91,4 +93,44 @@ fn convert_line_to_policy(line: String) -> day_two::PasswordPolicy {
     let password: String = caps["password"].to_owned();
 
     day_two::PasswordPolicy::new(c, min, max, password)
+}
+
+fn run_day_three() {
+    let day_three_file = match File::open("data/day_three.txt") {
+        Ok(f) => f,
+        Err(e) => panic!("failed to read day three file: {}", e),
+    };
+
+    let reader = BufReader::new(day_three_file);
+    let map = reader
+        .lines()
+        .map(|l| l.ok().unwrap().chars().collect())
+        .collect::<Vec<Vec<char>>>();
+
+    println!(
+        "Day three part one answer is {}",
+        day_three::get_trees_encountered((3, 1), &map),
+    );
+    println!(
+        "Day three part one answer is {}",
+        day_three::get_all_slopes(vec![(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)], map),
+    );
+}
+
+fn run_day_four() {
+    let mut day_three_file = match File::open("data/day_four.txt") {
+        Ok(f) => f,
+        Err(e) => panic!("failed to read day four file: {}", e),
+    };
+
+    let mut contents: String = String::new();
+    match day_three_file.read_to_string(&mut contents) {
+        Ok(_) => (),
+        Err(e) => panic!("failed to read day four file: {}", e),
+    };
+
+    println!(
+        "Day four part one answer is {}",
+        day_four::check_valid_passports(&contents[..]),
+    );
 }
